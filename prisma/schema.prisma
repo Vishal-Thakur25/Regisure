@@ -65,3 +65,19 @@ model Setting {
 
   @@index([key])
 }
+
+model Page {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  title          String
+  subtitle       String?  @db.Text
+  content        String   @db.Text
+  sections       String?  @db.Text // JSON string containing structured blocks or section objects
+  seoTitle       String?
+  seoDescription String?  @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([slug])
+}
+

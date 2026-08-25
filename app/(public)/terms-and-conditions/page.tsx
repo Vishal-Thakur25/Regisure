@@ -1,52 +1,49 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { getBusinessSettings } from '@/lib/settings';
+import { getPageBySlug } from '@/lib/pages';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getBusinessSettings();
+  const pageData = await getPageBySlug('terms-and-conditions');
   return {
-    title: `Terms & Conditions | ${settings.business_name}`,
-    description: `Terms and conditions governing the corporate consultancy services provided by ${settings.business_name}.`,
+    title: pageData.seoTitle || 'Terms & Conditions | Regisure India',
+    description: pageData.seoDescription || pageData.content,
   };
 }
 
 export default async function TermsAndConditionsPage() {
-  const settings = await getBusinessSettings();
+  const pageData = await getPageBySlug('terms-and-conditions');
+
+  let sections: Array<{ heading: string; text: string }> = [];
+  if (pageData.sections) {
+    try {
+      const parsed = JSON.parse(pageData.sections);
+      if (Array.isArray(parsed)) {
+        sections = parsed;
+      }
+    } catch {
+      // Fallback
+    }
+  }
 
   return (
     <div className="pt-28 pb-20 bg-slate-50 min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 text-slate-700 leading-relaxed">
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Terms & Conditions</h1>
-          <p className="text-xs text-slate-400 font-mono">Last Updated: January 2026</p>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">{pageData.title}</h1>
+          {pageData.subtitle && (
+            <p className="text-xs text-slate-400 font-mono">{pageData.subtitle}</p>
+          )}
 
-          <section className="space-y-3">
-            <h2 className="text-xl font-bold text-slate-900">1. Acceptance of Terms</h2>
-            <p>
-              By accessing our website or retaining {settings.business_name} for incorporation, GST, trademark, or secretarial services, you agree to comply with and be bound by these terms and conditions.
-            </p>
-          </section>
+          {pageData.content && (
+            <p className="text-slate-600 leading-relaxed font-medium">{pageData.content}</p>
+          )}
 
-          <section className="space-y-3">
-            <h2 className="text-xl font-bold text-slate-900">2. Professional Consultancy Services</h2>
-            <p>
-              {settings.business_name} acts as a professional legal and corporate advisory facilitator. Statutory approval timelines (MCA COI, GSTIN, FSSAI) are subject to government portal processing schedules and government officer verification.
-            </p>
-          </section>
-
-          <section className="space-y-3">
-            <h2 className="text-xl font-bold text-slate-900">3. Client Responsibilities</h2>
-            <p>
-              Clients are responsible for providing authentic, accurate, and un-tampered identity, address proof, and corporate documents. {settings.business_name} is not liable for statutory rejections resulting from fraudulent or incorrect client submissions.
-            </p>
-          </section>
-
-          <section className="space-y-3">
-            <h2 className="text-xl font-bold text-slate-900">4. Govering Law</h2>
-            <p>
-              These terms shall be governed and construed in accordance with the laws of India. Any disputes arising out of these services shall be subject to the exclusive jurisdiction of the courts in Delhi NCR, India.
-            </p>
-          </section>
+          {sections.map((sec, idx) => (
+            <section key={idx} className="space-y-2 pt-2">
+              <h2 className="text-xl font-bold text-slate-900">{sec.heading}</h2>
+              <p className="whitespace-pre-line leading-relaxed text-slate-600">{sec.text}</p>
+            </section>
+          ))}
         </div>
       </div>
     </div>

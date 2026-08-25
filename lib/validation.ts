@@ -48,7 +48,19 @@ export const SettingsSchema = z.object({
   instagram_url: z.string().url().optional().or(z.literal('')),
 });
 
+export const PageSchema = z.object({
+  slug: z.string().min(1, 'Slug is required'),
+  title: z.string().min(2, 'Page title must be at least 2 characters'),
+  subtitle: z.string().optional().or(z.literal('')),
+  content: z.string().min(5, 'Content must be at least 5 characters'),
+  sections: z.string().optional().or(z.literal('')),
+  seoTitle: z.string().optional().or(z.literal('')),
+  seoDescription: z.string().optional().or(z.literal('')),
+});
+
 export type LoginInput = z.infer<typeof LoginSchema>;
 export type LeadInput = z.infer<typeof LeadSchema>;
 export type ServiceInput = z.infer<typeof ServiceSchema>;
 export type SettingsInput = z.infer<typeof SettingsSchema>;
+export type PageInput = z.infer<typeof PageSchema>;
+

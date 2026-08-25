@@ -1,20 +1,49 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { getBusinessSettings } from '@/lib/settings';
+import { getPageBySlug } from '@/lib/pages';
 import { AboutClientWrapper } from '@/components/public/AboutClientWrapper';
 import { Target, Eye, Award, CheckCircle2 } from 'lucide-react';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getBusinessSettings();
+  const pageData = await getPageBySlug('about');
   return {
-    title: `About Us | ${settings.business_name}`,
-    description:
-      'Learn more about Regisure India, our mission, vision, core legal values, and certified chartered accountant leadership.',
+    title: pageData.seoTitle || 'About Us | Regisure India',
+    description: pageData.seoDescription || pageData.content,
   };
 }
 
 export default async function AboutPage() {
   const currentSettings = await getBusinessSettings();
+  const pageData = await getPageBySlug('about');
+
+  let mission = {
+    title: 'Our Mission',
+    desc: 'To deliver 100% digital, fast, and bulletproof legal incorporation, GST, trademark, and tax secretarial compliance to every growing business in India with total cost transparency.',
+  };
+  let vision = {
+    title: 'Our Vision',
+    desc: 'To become the single most trusted statutory partner and compliance operating system for over 100,000 corporate enterprises across India by 2030.',
+  };
+  let values = [
+    { title: 'Absolute Integrity', desc: 'No hidden government fees or surprise upsells. Complete upfront pricing transparency.' },
+    { title: 'Statutory Rigor', desc: 'Every application is thoroughly audited by certified CAs and advocates before submission.' },
+    { title: 'Speed & Execution', desc: 'Rapid SLA turnarounds with automated MCA, GST, and IP portal tracking updates.' },
+    { title: 'Client Confidentiality', desc: 'Bank-grade encryption protecting your personal financial identity documents.' },
+    { title: 'Proactive Advisory', desc: 'We notify you well before compliance due dates so you never incur ROC penalties.' },
+    { title: 'Lifelong Partnership', desc: 'From day 1 incorporation to series funding statutory audits, we stand by your company.' },
+  ];
+
+  if (pageData.sections) {
+    try {
+      const parsed = JSON.parse(pageData.sections);
+      if (parsed.mission && parsed.mission.title) mission = parsed.mission;
+      if (parsed.vision && parsed.vision.title) vision = parsed.vision;
+      if (Array.isArray(parsed.values) && parsed.values.length > 0) values = parsed.values;
+    } catch {
+      // Use defaults if JSON parsing fails
+    }
+  }
 
   return (
     <div className="pt-28 pb-20 bg-slate-50 min-h-screen">
@@ -22,14 +51,14 @@ export default async function AboutPage() {
         {/* Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold mb-3">
-            <Award className="w-4 h-4" />
-            <span>Pioneering Corporate Excellence</span>
+            <Award className="w-4 h-4 text-emerald-600" />
+            <span>{pageData.subtitle || 'Pioneering Corporate Excellence'}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
-            Empowering Indian Enterprises to Scale Seamlessly
+            {pageData.title}
           </h1>
-          <p className="text-slate-600 text-base sm:text-lg mt-4 leading-relaxed">
-            Regisure India was founded with a singular vision: to liberate entrepreneurs from tedious government bureaucracy and statutory legal friction through technology, transparency, and top-tier chartered accountancy.
+          <p className="text-slate-600 text-base sm:text-lg mt-4 leading-relaxed whitespace-pre-line">
+            {pageData.content}
           </p>
         </div>
 
@@ -39,9 +68,9 @@ export default async function AboutPage() {
             <div className="w-12 h-12 rounded-2xl bg-brand-600 text-white flex items-center justify-center shadow-md">
               <Target className="w-6 h-6" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900">Our Mission</h2>
-            <p className="text-slate-600 text-base leading-relaxed">
-              To deliver 100% digital, fast, and bulletproof legal incorporation, GST, trademark, and tax secretarial compliance to every growing business in India with total cost transparency.
+            <h2 className="text-2xl font-bold text-slate-900">{mission.title}</h2>
+            <p className="text-slate-600 text-base leading-relaxed whitespace-pre-line">
+              {mission.desc}
             </p>
           </div>
 
@@ -49,9 +78,9 @@ export default async function AboutPage() {
             <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center shadow-md">
               <Eye className="w-6 h-6" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900">Our Vision</h2>
-            <p className="text-slate-600 text-base leading-relaxed">
-              To become the single most trusted statutory partner and compliance operating system for over 100,000 corporate enterprises across India by 2030.
+            <h2 className="text-2xl font-bold text-slate-900">{vision.title}</h2>
+            <p className="text-slate-600 text-base leading-relaxed whitespace-pre-line">
+              {vision.desc}
             </p>
           </div>
         </div>
@@ -68,20 +97,13 @@ export default async function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { title: 'Absolute Integrity', desc: 'No hidden government fees or surprise upsells. Complete upfront pricing transparency.' },
-              { title: 'Statutory Rigor', desc: 'Every application is thoroughly audited by certified CAs and advocates before submission.' },
-              { title: 'Speed & Execution', desc: 'Rapid SLA turnarounds with automated MCA, GST, and IP portal tracking updates.' },
-              { title: 'Client Confidentiality', desc: 'Bank-grade encryption protecting your personal financial identity documents.' },
-              { title: 'Proactive Advisory', desc: 'We notify you well before compliance due dates so you never incur ROC penalties.' },
-              { title: 'Lifelong Partnership', desc: 'From day 1 incorporation to series funding statutory audits, we stand by your company.' },
-            ].map((val, i) => (
+            {values.map((val, i) => (
               <div key={i} className="p-6 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
                 <div className="flex items-center gap-2 text-brand-600 font-bold text-sm">
-                  <CheckCircle2 className="w-4 h-4" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>{val.title}</span>
                 </div>
-                <p className="text-slate-600 text-xs leading-relaxed">{val.desc}</p>
+                <p className="text-slate-600 text-xs leading-relaxed whitespace-pre-line">{val.desc}</p>
               </div>
             ))}
           </div>

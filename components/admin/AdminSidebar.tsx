@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Briefcase, PlusCircle, Users, Settings, LogOut, ExternalLink } from 'lucide-react';
+import { LayoutDashboard, Briefcase, PlusCircle, Users, Settings, LogOut, ExternalLink, FileText } from 'lucide-react';
 import { logoutAdminAction } from '@/actions/auth-actions';
 
 interface AdminSidebarProps {
@@ -24,8 +24,10 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     { name: 'Services', href: '/admin/services', icon: Briefcase },
     { name: 'Add Service', href: '/admin/services/new', icon: PlusCircle },
     { name: 'Leads & Enquiries', href: '/admin/leads', icon: Users },
+    { name: 'Manage Pages', href: '/admin/pages', icon: FileText },
     { name: 'Site Settings', href: '/admin/settings', icon: Settings },
   ];
+
 
   const handleLogout = async () => {
     await logoutAdminAction();

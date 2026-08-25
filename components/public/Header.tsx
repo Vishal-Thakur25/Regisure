@@ -56,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({ phoneNumber, onOpenConsultation 
         <div className="flex items-center justify-between">
           {/* Left Brand Logo (Image Only) */}
           <Link href="/" className="flex items-center shrink-0 group">
-            <div className="relative w-24 h-24 sm:w-20 sm:h-20 group-hover:scale-105 transition-transform duration-200">
+            <div className="relative w-20 h-20 sm:w-20 sm:h-20 group-hover:scale-105 transition-transform duration-200">
               <Image
                 src="/images/logo.png"
                 alt="Regisure India Logo"
